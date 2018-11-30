@@ -3,12 +3,38 @@
   <head>
     <meta charset='utf-8'>
     <meta name='viewport' content='width=device-width initial-scale=1.0'>
-    <title>Boilermaker</title>
+    <title>Currency</title>
     <link rel="stylesheet" href="/style.css" />
-    <script defer src="/bundle.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+<script type="text/javascript">
+   $(document).ready(function () {
+        $("#submit").on("click", (event) => {
+            event.preventDefault();
+            const userData = {
+                currentDate: moment($('#date').val()).format('L'),
+                totalDays: $('#days').val()
+            };
+            console.log(userData);
+            $.get("/api", userData, (data) => {
+                    alert("Total cost: $" + data.totalPrice);
+            });
+        });
+    });//Document End
+</script>
+
   </head>
   <body>
     <div id="app"></div>
+    <h1>🍌Banana Budget🍌</h1>
+    <form>
+        <label> 🍌Date: </label> <br>
+        <input id="date" type="date" placeholder="MM/DD/YYYY" required> </br>
+        <label> 🍌Days: </label> <br>
+        <input id="days" type="number" placeholder="0" required> </br>
+        <button id="submit"> Submit </button>
+    </form>    
+    <h3> Allocate for 🍌</h3>
   </body>
 </html>
 
