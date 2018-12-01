@@ -1,32 +1,26 @@
-module.exports = app => {
+
+const express = require('express');
+const app = express();
+const moment = require("moment");
+
+module.exports = app
+
   app.get("/api", (req, res) => {
-    const moment = require("moment");
-
-    // This will be a user input date
     let startDate = moment(req.query.currentDate).format("L");
-
     let result;
-
-      const dateParts = startDate.split("/");
-      let year = dateParts[2];
-
-      // Take user input and turn into Date object.
-      const d = new Date(startDate);
-      // This will be user input for total calender days stay.
+      const half = startDate.split("/");
+      let year = half[2];
+      const currDate = new Date(startDate);
       let numberOfDays = req.query.totalDays;
-      // Day of the week (from 0-6, Sunday to Saturday)
-      let day = d.getDay();
-      // Day of the month (from 1-31)
-      let week = d.getDate();
-      // Returns the month (from 0-11, Jan to Dec)
-      let month = d.getMonth();
+      let day = currDate.getDay();
+      let week = currDate.getDate();
+      let month = currDate.getMonth();
       let monthDays;
-      // Variable for total cost and price
-      let totalCost = 0;
+      
+      let getCost = 0;
       let price = 0;
 
-      // Finds the month and sets the amount of days each calendar month.
-      function findDays(x) {
+      function getDays(x) {
         if (x == 1) {
   return (monthDays = 28);
         } else if (x == 3 || x == 5 || x == 8 || x == 10) {
@@ -35,9 +29,9 @@ module.exports = app => {
           return (monthDays = 31);
         }
       }
-      findDays(month);
-      // Checks week of the month and sets price
-      function findPrice(x) {
+      getDays(month);
+
+      function getPrice(x) {
         if (x <= 7) {
           return (price = 0.05);
         } else if (x > 7 && x <= 14) {
@@ -50,19 +44,17 @@ module.exports = app => {
           return (price = 0.25);
         }
       }
-      // End of Functions
+
       for (let i = 0; i < numberOfDays; i++) {
-        // Checks if weekday then calculates costs
         if (day !== 6 && day !== 0) {
-          findPrice(week);
-          totalCost = totalCost + price;
+          getPrice(week);
+          getCost = getCost + price;
         }
-        // Resets the day of the week to Sunday after Saturday.
+
         day++;
         if (day > 6) {
           day = day % 7;
         }
-        // After the month is over this will calculate how many days in the new month and reset the date.
         week++;
         if (week > monthDays) {
           month++;
@@ -70,12 +62,12 @@ module.exports = app => {
             year++;
             month = 0;
           }
-          findDays(month);
+          getDays(month);
           week = 1;
         }
       }
-      // Print out total.
-      result = totalCost.toFixed(2);
+
+      result = getCost.toFixed(2);
     res.json({ totalPrice: result });
   });
-};
+
